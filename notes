@@ -1,0 +1,53 @@
+
+# terminal commands:
+python -m venv venv
+source venv/bin/activate
+
+# then:
+pip install django
+django-admin startproject hunter .
+python manage.py startapp procedures
+pip install djangorestframework djangorestframework-simplejwt
+
+# hunter->settings.py
+installed apps
+rest_framework
+
+# migrations
+python manage.py makemigrations
+python manage.py migrate
+
+# super user
+python manage.py createsuperuser
+user: luis
+email: lfariabr@gmail.com
+pwd: luis
+
+# finally
+python manage.py runserver
+
+###
+# API: http://127.0.0.1:8000/api/auth/login
+{
+    "username": "luis", 
+    "password": "luis"
+}
+
+### favorite
+http://127.0.0.1:8000/api/procedures/2/favorite/
+
+### unfavorite
+http://127.0.0.1:8000/api/procedures/2/unfavorite/
+
+### list
+http://127.0.0.1:8000/api/procedures/favorites
+
+# NEXT
+- tests
+- think how to deal/manage with clients from CRM
+- add a pagination for lists
+- think about database (SQLite usage?)
+- docummentation of api (pip install drf-yasg)
+- push
+- think about deep machine learning
+- deploy api online

@@ -1,0 +1,125 @@
+
+# terminal commands:
+python -m venv venv
+source venv/bin/activate
+
+# then:
+pip install django
+django-admin startproject hunter .
+python manage.py startapp procedures
+pip install djangorestframework djangorestframework-simplejwt
+
+# hunter->settings.py
+installed apps
+rest_framework
+
+# migrations
+python manage.py makemigrations
+python manage.py migrate
+
+# super user
+python manage.py createsuperuser
+user: luis
+email: lfariabr@gmail.com
+pwd: luis
+
+# finally
+python manage.py runserver
+
+###
+# API: http://127.0.0.1:8000/api/auth/login
+{
+    "username": "luis", 
+    "password": "luis"
+}
+
+### favorite
+http://127.0.0.1:8000/api/procedures/2/favorite/
+
+### unfavorite
+http://127.0.0.1:8000/api/procedures/2/unfavorite/
+
+### list
+http://127.0.0.1:8000/api/procedures/favorites
+
+# NEXT
+- tests
+- think how to deal/manage with clients from CRM
+- add a pagination for lists
+- think about database (SQLite usage?)
+- docummentation of api (pip install drf-yasg)
+- think about deep machine learning
+- deploy api online
+
+12/10/2024
+- api/procedures asking for authentication token with (permission_classes)
+- api/procedures GET to list procedures (empty body wil return list)
+- api/procedures for POST to create procedure (body below)
+{
+    "id": 41,
+    "name": "TESTE",
+    "description": "TESTE MESMO",
+    "cost": 999.0,
+    "duration": 15,
+    "expiration": 40,
+    "region": "TESTE",
+    "complaint": "Linhas de TESTE, TESTE"
+}
+- api/procedures for UPDATE to update procedures (all fields or only specific data)
+http://127.0.0.1:8000/api/procedures/<procedure_id>/ with body:
+{
+  "name": "Updated Procedure Name",
+  "description": "Updated description for the procedure.",
+  "cost": 999,
+  "region": "Updated Region",
+  "complaint": "Updated complaint",
+  "duration": 30,
+  "expiration": 60
+}
+
+- api/procedures for DELETE to delete procedure
+DELETE reqeust to http://127.0.0.1:8000/api/procedures/<procedure_id>/
+empty body
+
+- ViewSet is amazing because it automatically generate CRUD endpoints
+
+- set up api/appointments/recommended/
+class ServedAppointmentsViewSet
+action within it with "def recommend" triggering recommendation engine
+request to this url didn't work:
+http://127.0.0.1:8000/api/procedures/recommended/
+
+13/10
+- splitting Appointments from procedures
+ procedures>url>routes>import appointments.views ServedAppointmentsViewSet 
+ViewSet is imported from the class I created
+
+14/10
+- splitting recommendations from appointments and procedures
+- update URLs at endpoint api/procedures/ and api/recommend/
+- check why only 1 recommendation and then it dies
+- algorithm.py for data prep(json) and recommendation logic
+- views method "recommend" as entrypoint for the API receiving procedures and applying logic
+
+to-dos
+1 - deal with extra '/' at URL
+2 - create a permmanent token for 'luis' user
+option 1: do it via JWT that we already have
+option 2
+INSTALLED_APPS = [
+    # Other apps
+    'rest_framework.authtoken',
+]
+python manage.py shell
+use "Authorization: Token <your_token>" on requests
+
+3 - log db to save received requests with the appointment payload data for training
+	1.	Create a RequestLog model:
+	2.	Log the Request in the View:
+
+4 - think about performance optimization - response times? big volume of requests
+5 - add more detailed messages during error handling
+
+Samir
+- this model of preparing the procedures and just sending back would work?
+- graphQLProCorpo component to GET retrieve "purchases", "leads messages" and "follow ups"

@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'rest_framework', # new
     'rest_framework_simplejwt', # new
     'procedures', # new
+    'appointments', # new
+    'recommendations', # new
 ]
 
 # new

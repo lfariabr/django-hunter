@@ -42,12 +42,18 @@ INSTALLED_APPS = [
     'procedures', # new
     'appointments', # new
     'recommendations', # new
+    'rest_framework.authtoken', # new
 ]
 
 # new
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     ),
 }
 

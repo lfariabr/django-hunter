@@ -100,25 +100,45 @@ ViewSet is imported from the class I created
 - check why only 1 recommendation and then it dies
 - algorithm.py for data prep(json) and recommendation logic
 - views method "recommend" as entrypoint for the API receiving procedures and applying logic
+- commit changes
+- optimize URL of file to use procedures.json file path
+- include "score" on the return of API
+- log db to save received requests with the appointment payload data for training
+	1. Create a RequestLog model:
+	2. Log the Request in the View:
+    3. Create admin view to list Request Logs class RequestLogAdmin
+
+15/10
+- review changes
+- recommendation request
+{
+  "procedures": ["BOTOX LIGHT (25 Unidades)"],
+  "client_id": "12345",
+  "client_name": "João Silva",
+  "most_recent_appointment": "2024-10-10T14:00:00Z",
+  "most_recent_purchase": "2024-09-15T14:00:00Z"
+}
+- create a permanent token
+Settings:
+1) Installed apps: 'rest_framework.authtoken', # new
+2) 'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+3) python manage.py shell
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+
+user = User.objects.get(username='test')
+token, created = Token.objects.get_or_create(user=user)
+print(token.key)
 
 to-dos
-1 - deal with extra '/' at URL
-2 - create a permmanent token for 'luis' user
-option 1: do it via JWT that we already have
-option 2
-INSTALLED_APPS = [
-    # Other apps
-    'rest_framework.authtoken',
-]
-python manage.py shell
-use "Authorization: Token <your_token>" on requests
-
-3 - log db to save received requests with the appointment payload data for training
-	1.	Create a RequestLog model:
-	2.	Log the Request in the View:
-
-4 - think about performance optimization - response times? big volume of requests
-5 - add more detailed messages during error handling
+1 - think about performance optimization - response times? big volume of requests
+2 - add more detailed messages during error handling
 
 Samir
 - this model of preparing the procedures and just sending back would work?

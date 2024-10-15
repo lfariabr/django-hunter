@@ -12,3 +12,4 @@ migrations/
 media/
 staticfiles/
 runtime.txt
+notes.txt

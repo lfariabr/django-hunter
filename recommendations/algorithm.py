@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import json
 import os
+from django.conf import settings
 
 # Sample recommendation logic
 # def prepare_data_and_similarity():
@@ -14,9 +15,8 @@ import os
 # Updated recommendation logic with the full path to your JSON file
 
 def prepare_data_and_similarity():
-    # Specify the full path to your procedures.json
-    json_file_path = '/Users/luisfaria/Library/CloudStorage/GoogleDrive-lfariabr@gmail.com/My Drive/LUIS/WORK/18digital/pro-corpo/Lab Programação/dev/hunter/procedures/procedures.json'
-    
+    # Specify the full path to procedures.json
+    json_file_path = os.path.join(settings.BASE_DIR, 'procedures', 'procedures.json')
     # Ensure the file exists
     if not os.path.exists(json_file_path):
         raise FileNotFoundError(f"JSON file not found at: {json_file_path}")
@@ -94,5 +94,9 @@ def get_recommendations_multi(procedures, cosine_sim, df, indices, peso_similari
     sim_scores_df = sim_scores_df.sort_values(by='score', ascending=False)
     top_indices = sim_scores_df.head(5)['index'].values
 
+    recommended_df = df.iloc[top_indices].copy()
+    recommended_df['score'] = sim_scores_df.head(5)['score'].values # Including score in the response
+
     # Return recommended procedures
-    return df.iloc[top_indices]
+    # return df.iloc[top_indices]
+    return recommended_df

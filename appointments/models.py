@@ -10,6 +10,7 @@ class ServedAppointments(models.Model):
     employee_name = models.CharField(max_length=100)
     procedure = models.ManyToManyField(Procedure)  # Many-to-many relationship with Procedure
     appointment_date = models.DateTimeField()
+    reference_code = models.CharField(max_length=255, null=True, blank=True)
     status = models.CharField(max_length=50)
     store_id = models.CharField(max_length=100)
     store_name = models.CharField(max_length=100)

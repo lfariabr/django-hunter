@@ -7,13 +7,32 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from recommendations.algorithm import prepare_data_and_similarity, get_recommendations_multi  # Import algorithm
 from recommendations.models import RequestLog
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class RecommendationsViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can access
+    permission_classes = [IsAuthenticated]  # Ensuring only authenticated users can access
+
+    @swagger_auto_schema(
+            method='POST',
+            request_body=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'procedures': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING)),
+                    'client_id': openapi.Schema(type=openapi.TYPE_STRING),
+                    'client_name': openapi.Schema(type=openapi.TYPE_STRING),
+                    'most_recent_appointment': openapi.Schema(type=openapi.TYPE_STRING),
+                    'most_recent_purchase': openapi.Schema(type=openapi.TYPE_STRING),
+                    'reference_code': openapi.Schema(type=openapi.TYPE_STRING),
+                },
+                required=['procedures'],
+            ),
+            responses={200: openapi.Schema(type=openapi.TYPE_OBJECT, properties={'status': openapi.Schema(type=openapi.TYPE_STRING)})},
+    )
 
     @action(detail=False, methods=['POST'])
     def recommend(self, request):
-        # Extract the 'procedures' from the request body
+        # Extracting the 'procedures' from the request body
         procedures = request.data.get('procedures', [])
 
         # Extra fields
@@ -22,6 +41,7 @@ class RecommendationsViewSet(viewsets.ViewSet):
         client_name = request.data.get('client_name', None)
         most_recent_appointment = request.data.get('most_recent_appointment', None)
         most_recent_purchase = request.data.get('most_recent_purchase', None)
+        reference_code = request.data.get('reference_code', None)
 
         if not procedures:
             return Response({'status': 'No procedures provided'}, status=status.HTTP_400_BAD_REQUEST)
@@ -48,6 +68,7 @@ class RecommendationsViewSet(viewsets.ViewSet):
             client_name=client_name,
             most_recent_appointment=most_recent_appointment,
             most_recent_purchase=most_recent_purchase,
+            reference_code=reference_code,
             procedures=procedures,
             recommended_procedures=recommended_procedures  # Log the recommendations
         )

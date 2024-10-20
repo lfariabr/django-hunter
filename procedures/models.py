@@ -11,11 +11,7 @@ class Procedure(models.Model):
     expiration = models.PositiveIntegerField() # In days
     region = models.CharField(max_length=100)
     complaint = models.TextField()
+    reference_code = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return self.name
-    
-class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    procedure = models.ForeignKey(Procedure, on_delete=models.CASCADE)
-    added_at = models.DateTimeField(auto_now_add=True)

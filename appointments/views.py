@@ -8,4 +8,4 @@ from rest_framework.permissions import IsAuthenticated
 class ServedAppointmentsViewSet(viewsets.ModelViewSet):
     queryset = ServedAppointments.objects.all()
     serializer_class = ServedAppointmentsSerializer
-    permission_classes = [IsAuthenticated]  
+    permission_classes = [IsAuthenticated]

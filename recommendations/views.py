@@ -1,17 +1,20 @@
 # recommendations/views.py
 
 from django.shortcuts import render
+from recommendations.algorithm import prepare_data_and_similarity, get_recommendations_multi  # Import algorithm
+from recommendations.models import RequestLog
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from recommendations.algorithm import prepare_data_and_similarity, get_recommendations_multi  # Import algorithm
-from recommendations.models import RequestLog
+from rest_framework.throttling import UserRateThrottle
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 class RecommendationsViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]  # Ensuring only authenticated users can access
+    # Ensuring only authenticated users can access
+    permission_classes = [IsAuthenticated]  
+    throtthle_classes = [UserRateThrottle]
 
     @swagger_auto_schema(
             method='POST',
@@ -30,17 +33,20 @@ class RecommendationsViewSet(viewsets.ViewSet):
             responses={200: openapi.Schema(type=openapi.TYPE_OBJECT, properties={'status': openapi.Schema(type=openapi.TYPE_STRING)})},
     )
 
+    # Using @action to use a custom endpoint
     @action(detail=False, methods=['POST'])
     def recommend(self, request):
+        
         # Extracting the 'procedures' from the request body
         procedures = request.data.get('procedures', [])
 
         # Extra fields
-        procedures = request.data.get('procedures', [])
         client_id = request.data.get('client_id', None)
         client_name = request.data.get('client_name', None)
         most_recent_appointment = request.data.get('most_recent_appointment', None)
         most_recent_purchase = request.data.get('most_recent_purchase', None)
+        
+        # Procedure ID, for example
         reference_code = request.data.get('reference_code', None)
 
         if not procedures:
@@ -70,7 +76,7 @@ class RecommendationsViewSet(viewsets.ViewSet):
             most_recent_purchase=most_recent_purchase,
             reference_code=reference_code,
             procedures=procedures,
-            recommended_procedures=recommended_procedures  # Log the recommendations
+            recommended_procedures=recommended_procedures
         )
 
         # Send back the recommended procedures
